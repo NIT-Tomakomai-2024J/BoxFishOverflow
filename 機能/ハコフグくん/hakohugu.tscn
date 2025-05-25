@@ -5,32 +5,31 @@
 [ext_resource type="Texture2D" uid="uid://brshx3dib1g72" path="res://機能/ハコフグくん/テクスチャ/ハコフグくん_体.png" id="3_djmqs"]
 [ext_resource type="Texture2D" uid="uid://d23eoov4kcp4x" path="res://機能/ハコフグくん/テクスチャ/ハコフグくん_尾.png" id="4_ow6kx"]
 
-[node name="Hakohugu" type="Node2D" node_paths=PackedStringArray("body", "tail", "bits_sprite")]
+[node name="Hakohugu" type="Node2D"]
 script = ExtResource("1_ocp47")
-body = NodePath("Body")
-tail = NodePath("Tail")
-bits_sprite = [NodePath("@Sprite2D@22659"), NodePath("@Sprite2D@22660"), NodePath("@Sprite2D@22661"), NodePath("@Sprite2D@22662"), NodePath("@Sprite2D@22663"), NodePath("@Sprite2D@22664")]
-bits = 6
-fish_value = 32
 
-[node name="Body" type="Sprite2D" parent="."]
-z_index = -1
-texture_filter = 1
-texture_repeat = 2
-position = Vector2(56, 0)
-texture = ExtResource("3_djmqs")
-region_enabled = true
-region_rect = Rect2(0, 0, 96, 16)
+[node name="Visual" type="Node2D" parent="."]
+position = Vector2(8, 0)
 
-[node name="Tail" type="Sprite2D" parent="."]
-texture_filter = 1
-texture_repeat = 1
-position = Vector2(112, 0)
-texture = ExtResource("4_ow6kx")
-
-[node name="Head" type="Sprite2D" parent="."]
+[node name="Head" type="Sprite2D" parent="Visual"]
+z_index = 1
 texture_filter = 1
 texture_repeat = 1
 texture = ExtResource("2_vq5ij")
 
-[node name="Bits" type="Node2D" parent="."]
+[node name="Body" type="Sprite2D" parent="Visual"]
+texture_filter = 1
+texture_repeat = 2
+position = Vector2(8, 0)
+texture = ExtResource("3_djmqs")
+region_enabled = true
+region_rect = Rect2(0, 0, 0, 16)
+
+[node name="Tail" type="Sprite2D" parent="Visual"]
+z_index = 1
+texture_filter = 1
+texture_repeat = 1
+position = Vector2(16, 0)
+texture = ExtResource("4_ow6kx")
+
+[node name="Bits" type="Node2D" parent="Visual"]

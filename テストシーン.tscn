@@ -1,0 +1,53 @@
+[gd_scene load_steps=12 format=4 uid="uid://bglvsd08alg2a"]
+
+[ext_resource type="PackedScene" uid="uid://crsns604twa2s" path="res://機能/ハコフグくん/hakohugu.tscn" id="1_cu8si"]
+[ext_resource type="Script" uid="uid://0057dtql4d0x" path="res://機能/論理ゲート/logical_gate.gd" id="2_gs2jo"]
+[ext_resource type="Texture2D" uid="uid://dq67mvsknvyw7" path="res://機能/論理ゲート/AND/頭.png" id="3_ekavn"]
+[ext_resource type="Texture2D" uid="uid://lkkv47uufycp" path="res://機能/論理ゲート/OR/頭.png" id="3_vrg2x"]
+[ext_resource type="Texture2D" uid="uid://bc7bd3p0dkpnc" path="res://機能/論理ゲート/胴体.png" id="4_wxafa"]
+[ext_resource type="Texture2D" uid="uid://ssvgj2hundwt" path="res://機能/論理ゲート/AND/尾.png" id="5_46glv"]
+[ext_resource type="Texture2D" uid="uid://clslwech1dvi1" path="res://機能/論理ゲート/OR/尾.png" id="5_rvjkm"]
+[ext_resource type="Texture2D" uid="uid://biat00ixfxwce" path="res://タイル/壁タイル.png" id="6_wxafa"]
+[ext_resource type="Script" uid="uid://de4nrnitrnci6" path="res://world.gd" id="9_rvjkm"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_46glv"]
+texture = ExtResource("6_wxafa")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_vrg2x"]
+sources/0 = SubResource("TileSetAtlasSource_46glv")
+
+[node name="Node2D" type="Node2D"]
+
+[node name="World" type="Node2D" parent="." node_paths=PackedStringArray("tilemap", "logical_gates")]
+script = ExtResource("9_rvjkm")
+tilemap = NodePath("TileMapLayer")
+logical_gates = [NodePath("OR"), NodePath("AND")]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="World"]
+texture_filter = 1
+tile_map_data = PackedByteArray("AAAFAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAADAAQAAAAAAAAAAAACAAQAAAAAAAAAAAABAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAD//wQAAAAAAAAAAAD+/wQAAAAAAAAAAAD9/wQAAAAAAAAAAAD8/wQAAAAAAAAAAAD7/wQAAAAAAAAAAAD6/wQAAAAAAAAAAAD6//v/AAAAAAAAAAD7//v/AAAAAAAAAAD8//v/AAAAAAAAAAD9//v/AAAAAAAAAAD+//v/AAAAAAAAAAD///v/AAAAAAAAAAAAAPv/AAAAAAAAAAABAPv/AAAAAAAAAAACAPv/AAAAAAAAAAADAPv/AAAAAAAAAAAEAPv/AAAAAAAAAAAFAPv/AAAAAAAAAAD5/wQAAAAAAAAAAAD5/wMAAAAAAAAAAAD5/wIAAAAAAAAAAAD5/wEAAAAAAAAAAAD5/wAAAAAAAAAAAAD5////AAAAAAAAAAD5//7/AAAAAAAAAAD5//3/AAAAAAAAAAD5//z/AAAAAAAAAAD5//v/AAAAAAAAAAAGAPv/AAAAAAAAAAAGAAQAAAAAAAAAAAAHAPv/AAAAAAAAAAAIAP3/AAAAAAAAAAAIAP7/AAAAAAAAAAAIAP//AAAAAAAAAAAIAAAAAAAAAAAAAAAIAAEAAAAAAAAAAAAIAAIAAAAAAAAAAAAIAAMAAAAAAAAAAAAIAAQAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAPz/AAAAAAAAAAAIAPv/AAAAAAAAAAA=")
+tile_set = SubResource("TileSet_vrg2x")
+
+[node name="OR" type="Node2D" parent="World"]
+position = Vector2(-64, -40)
+script = ExtResource("2_gs2jo")
+head = ExtResource("3_vrg2x")
+body = ExtResource("4_wxafa")
+tail = ExtResource("5_rvjkm")
+value = 7
+
+[node name="AND" type="Node2D" parent="World"]
+position = Vector2(-48, -24)
+script = ExtResource("2_gs2jo")
+head = ExtResource("3_ekavn")
+body = ExtResource("4_wxafa")
+tail = ExtResource("5_46glv")
+value = 10
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(3, 3)
+
+[node name="Hakohugu" parent="." node_paths=PackedStringArray("world") instance=ExtResource("1_cu8si")]
+position = Vector2(0, 8)
+world = NodePath("../World")
