@@ -9,7 +9,7 @@
 script = ExtResource("1_ocp47")
 
 [node name="Visual" type="Node2D" parent="."]
-position = Vector2(8, 0)
+position = Vector2(8, 8)
 
 [node name="Head" type="Sprite2D" parent="Visual"]
 z_index = 1

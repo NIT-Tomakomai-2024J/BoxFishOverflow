@@ -7,8 +7,6 @@ class_name World
 func does_tile_exists(coords:Vector2):
 	var icoords = Vector2i(coords / 16)
 	var tmp = tilemap.get_cell_source_id(icoords) != -1
-	if tmp:
-		print(icoords, " : ", tilemap.get_cell_source_id(icoords))
 	for gate in logical_gates:
 		var origin = int(gate.global_position.x / 16)
 		tmp = tmp or ((origin <= icoords.x) or (icoords.x <= origin + gate.length))

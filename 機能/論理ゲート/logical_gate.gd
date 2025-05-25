@@ -17,8 +17,11 @@ class_name LogicalGate
 		length = value
 		update()
 
-var one  = preload("res://機能/論理ゲート/イチ.png")
-var zero = preload("res://機能/論理ゲート/ゼロ.png")
+@onready var ONE  = preload("res://機能/論理ゲート/イチ.png")
+@onready var ZERO = preload("res://機能/論理ゲート/ゼロ.png")
+
+const PIXEL_TILE = 16
+const HALF_TILE  = 8
 
 var head_sprite:Sprite2D
 var body_sprite:Sprite2D
@@ -45,15 +48,15 @@ func update():
 		head_sprite = Sprite2D.new()
 		head_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		head_sprite.texture = head
-		head_sprite.position.x = 8
+		head_sprite.position = Vector2(HALF_TILE, HALF_TILE)
 		add_child(head_sprite)
 		
 		# Make a body
 		body_sprite = Sprite2D.new()
 		body_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		body_sprite.region_enabled = true
-		body_sprite.region_rect.size = Vector2(16 * length, 16)
-		body_sprite.position.x = (length + 2) << 3
+		body_sprite.region_rect.size = Vector2(PIXEL_TILE * length, PIXEL_TILE)
+		body_sprite.position = Vector2((length + 2) * HALF_TILE, HALF_TILE)
 		body_sprite.texture = body
 		add_child(body_sprite)
 		
@@ -61,18 +64,18 @@ func update():
 			var bit_sprite = Sprite2D.new()
 			bit_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			if (value >> i) & 1:
-				bit_sprite.texture = one
+				bit_sprite.texture = ONE
 			else:
-				bit_sprite.texture = zero
-			bit_sprite.position.x = ((length - i) << 4) + 4
-			bit_sprite.z_index = 1
+				bit_sprite.texture = ZERO
+			bit_sprite.position = Vector2(((length - i) * PIXEL_TILE) + 8, HALF_TILE)
+			bit_sprite.z_index = 2
 			bits_sprites.push_front(bit_sprite)
 			add_child(bit_sprite)
 		
 		tail_sprite = Sprite2D.new()
 		tail_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		tail_sprite.texture = tail
-		tail_sprite.position.x = (length + 1) << 4
+		tail_sprite.position = Vector2((length + 1) * PIXEL_TILE, HALF_TILE)
 		add_child(tail_sprite)
 
 func _ready() -> void:

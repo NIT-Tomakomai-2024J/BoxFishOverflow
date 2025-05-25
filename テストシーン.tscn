@@ -30,24 +30,21 @@ tile_map_data = PackedByteArray("AAAFAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAADAAQAAAAAAAA
 tile_set = SubResource("TileSet_vrg2x")
 
 [node name="OR" type="Node2D" parent="World"]
-position = Vector2(-64, -40)
+position = Vector2(-64, -32)
 script = ExtResource("2_gs2jo")
 head = ExtResource("3_vrg2x")
 body = ExtResource("4_wxafa")
 tail = ExtResource("5_rvjkm")
-value = 7
 
 [node name="AND" type="Node2D" parent="World"]
-position = Vector2(-48, -24)
+position = Vector2(-48, 32)
 script = ExtResource("2_gs2jo")
 head = ExtResource("3_ekavn")
 body = ExtResource("4_wxafa")
 tail = ExtResource("5_46glv")
-value = 10
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
 
 [node name="Hakohugu" parent="." node_paths=PackedStringArray("world") instance=ExtResource("1_cu8si")]
-position = Vector2(0, 8)
 world = NodePath("../World")

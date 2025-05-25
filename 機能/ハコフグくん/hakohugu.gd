@@ -71,7 +71,7 @@ func _physics_process(delta: float) -> void:
 		toggle_expanded(false)
 	
 	# time_counterをsinにかけてゆらゆら揺らす
-	visual.position.y = sin(time_counter * SWAY_FREQ) * SWAY_WIDTH
+	visual.position.y = HALF_TILE + sin(time_counter * SWAY_FREQ) * SWAY_WIDTH
 	
 	# 移動距離|a→|が0でなければ移動する
 	if movement and not is_moving:
@@ -111,7 +111,7 @@ func update_memory_capacity(width):
 			bit.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			bit.z_index = 1
 			bit.visible = false
-			bit.position.x = PIXEL_TILE * (i + 1) - 4
+			bit.position.x = PIXEL_TILE * (i + 1)
 			bits_sprite.push_back(bit)
 			visual.add_child(bit)
 
