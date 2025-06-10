@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dq67mvsknvyw7"
-path="res://.godot/imported/頭.png-ff9923c007f4e87bdfda7968f9767f01.ctex"
+uid="uid://4affw7la5126"
+path="res://.godot/imported/logical_gates.png-96be355378cb5bdb5ad69f1808a91652.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://機能/論理ゲート/AND/頭.png"
-dest_files=["res://.godot/imported/頭.png-ff9923c007f4e87bdfda7968f9767f01.ctex"]
+source_file="res://タイル/logical_gates.png"
+dest_files=["res://.godot/imported/logical_gates.png-96be355378cb5bdb5ad69f1808a91652.ctex"]
 
 [params]
 

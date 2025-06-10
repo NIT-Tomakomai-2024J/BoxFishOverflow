@@ -31,5 +31,3 @@ texture_filter = 1
 texture_repeat = 1
 position = Vector2(16, 0)
 texture = ExtResource("4_ow6kx")
-
-[node name="Bits" type="Node2D" parent="Visual"]
