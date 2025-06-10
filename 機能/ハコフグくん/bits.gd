@@ -104,3 +104,7 @@ func expand(duration:float) -> void:
 			.create_timer(i * interval)\
 			.timeout\
 			.connect(func(): b.visible = true)
+
+func __set_for_all_bits__(property:String, value:Variant) -> void:
+	for b in bits:
+		b.set(property, value)
