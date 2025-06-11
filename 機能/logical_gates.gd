@@ -35,22 +35,22 @@ class LogicalGate:
 	var head_pos:Vector2i
 
 func is_tile_0_or_1(coords:Vector2i) -> bool:
-	return self.get_cell_source_id(coords) in [1, 2]
+	return get_id_as_bool(coords).is_some
 
 func get_id_as_bool(coords:Vector2i) -> Option:
-	match self.get_cell_source_id(coords):
-		1:
+	match self.get_cell_atlas_coords(coords):
+		Vector2i(0, 0):
 			return Option.Some(true)
-		2:
+		Vector2i(1, 0):
 			return Option.Some(false)
 		_:
 			return Option.None()
 
 func get_head_kind(coords:Vector2i) -> Option:
-	match self.get_cell_source_id(coords):
-		4:
+	match self.get_cell_atlas_coords(coords):
+		Vector2i(0, 2):
 			return Option.Some(GateKind.OR)
-		6:
+		Vector2i(0, 1):
 			return Option.Some(GateKind.AND)
 		_:
 			return Option.None()
@@ -64,7 +64,7 @@ func get_bits_from(from:Vector2i) -> Option:
 		if not bit.is_some:
 			break
 		else:
-			bits.push_back(bit)
+			bits.push_back(bit.unwrap())
 		o += 1
 	return Option.Some(bits)
 
@@ -75,7 +75,7 @@ func get_bits_left_limit(coords:Vector2i) -> Option:
 	var i = 0
 	while is_tile_0_or_1(coords - Vector2i(i, 0)):
 		i += 1
-	var left_limit = coords + Vector2i(i, 0)
+	var left_limit = coords - Vector2i(i, 0)
 	return Option.Some(left_limit)
 
 func get_logical_gate(coords:Vector2i) -> Option:
@@ -85,23 +85,25 @@ func get_logical_gate(coords:Vector2i) -> Option:
 		if not from.is_some:
 			return Option.None()
 		from = from.unwrap()
-		var bits = get_bits_from(from)
+		var bits = get_bits_from(from + Vector2i(1, 0))
 		if not bits.is_some:
 			return Option.None()
 		bits = bits.unwrap()
 		
-		var head_kind = get_head_kind(from + Vector2i(1, 0))
+		var head_kind = get_head_kind(from)
 		if not head_kind.is_some:
-			printerr("A headless logical gate found.")
+			printerr(
+				"A headless logical gate found.\n	Detail :\n	Head Coords -> ",
+				from, "\n	Atlus Coords -> ", get_cell_atlas_coords(from)
+			)
 			return Option.None()
 		
 		var lgate = LogicalGate.new()
 		lgate.bits = bits
-		lgate.gate_kind = head_kind
+		lgate.gate_kind = head_kind.unwrap()
 		lgate.head_pos = from + Vector2i(1, 0)
 		
 		return Option.Some(lgate)
-	# そのタイルが論理ゲートの頭だったら
 	elif get_head_kind(coords).is_some:
 		var from = coords + Vector2i(1, 0)
 		var bits = get_bits_from(from)
@@ -117,6 +119,5 @@ func get_logical_gate(coords:Vector2i) -> Option:
 		lgate.head_pos = from + Vector2i(1, 0)
 		
 		return Option.Some(lgate)
-	# すべてに該当しなければ
 	else:
 		return Option.None()
