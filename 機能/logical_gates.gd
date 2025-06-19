@@ -1,39 +1,6 @@
 extends TileMapLayer
 class_name LogicalGates
 
-enum GateKind {
-	OR, AND, NOT,
-	NOR, NAND,
-	XOR
-}
-
-class Option:
-	var some
-	var is_some:bool
-	
-	func unwrap():
-		if self.is_some:
-			return self.some
-		else:
-			printerr("Unwraped on none value.")
-			return null
-	
-	static func Some(value) -> Option:
-		var opt = Option.new()
-		opt.some = value
-		opt.is_some = true
-		return opt
-	
-	static func None() -> Option:
-		var opt = Option.new()
-		opt.is_some = false
-		return opt
-
-class LogicalGate:
-	var gate_kind:GateKind
-	var bits:Array[bool]
-	var head_pos:Vector2i
-
 func is_tile_0_or_1(coords:Vector2i) -> bool:
 	return get_id_as_bool(coords).is_some
 
@@ -48,10 +15,12 @@ func get_id_as_bool(coords:Vector2i) -> Option:
 
 func get_head_kind(coords:Vector2i) -> Option:
 	match self.get_cell_atlas_coords(coords):
+		Vector2i(0, 3):
+			return Option.Some(Logigate.GateKind.COLGATE)
 		Vector2i(0, 2):
-			return Option.Some(GateKind.OR)
+			return Option.Some(Logigate.GateKind.OR)
 		Vector2i(0, 1):
-			return Option.Some(GateKind.AND)
+			return Option.Some(Logigate.GateKind.AND)
 		_:
 			return Option.None()
 
@@ -98,10 +67,10 @@ func get_logical_gate(coords:Vector2i) -> Option:
 			)
 			return Option.None()
 		
-		var lgate = LogicalGate.new()
+		var lgate = Logigate.new()
 		lgate.bits = bits
 		lgate.gate_kind = head_kind.unwrap()
-		lgate.head_pos = from + Vector2i(1, 0)
+		lgate.head_pos = from
 		
 		return Option.Some(lgate)
 	elif get_head_kind(coords).is_some:
@@ -113,11 +82,41 @@ func get_logical_gate(coords:Vector2i) -> Option:
 		
 		var head_kind = get_head_kind(coords).unwrap()
 		
-		var lgate = LogicalGate.new()
+		var lgate = Logigate.new()
 		lgate.bits = bits
 		lgate.gate_kind = head_kind
-		lgate.head_pos = from + Vector2i(1, 0)
+		lgate.head_pos = coords
 		
 		return Option.Some(lgate)
 	else:
 		return Option.None()
+
+var _runtime_modulates: Dictionary = {}
+
+func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
+	return _runtime_modulates.has(coords)
+
+func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
+	if not _runtime_modulates.has(coords):
+		return
+	tile_data.modulate = _runtime_modulates[coords]
+
+func show_incorrect(coords: Vector2i):
+	_runtime_modulates[coords] = Color.RED
+
+	var tween = create_tween()
+	tween.tween_method(
+		func(c: Color):
+			if _runtime_modulates.has(coords):
+				_runtime_modulates[coords] = c
+				notify_runtime_tile_data_update(),
+		Color.RED,
+		Color.WHITE,
+		0.25
+	)
+
+	tween.finished.connect(func():
+		if _runtime_modulates.has(coords):
+			_runtime_modulates.erase(coords)
+			notify_runtime_tile_data_update()
+	)

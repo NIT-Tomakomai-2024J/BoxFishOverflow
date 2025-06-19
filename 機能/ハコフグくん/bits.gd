@@ -108,3 +108,9 @@ func expand(duration:float) -> void:
 func __set_for_all_bits__(property:String, value:Variant) -> void:
 	for b in bits:
 		b.set(property, value)
+
+func inspect() -> Array[bool]:
+	var res:Array[bool] = []
+	for b in bits:
+		res.append(b.own_value)
+	return res

@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=4 uid="uid://bglvsd08alg2a"]
+[gd_scene load_steps=9 format=4 uid="uid://bglvsd08alg2a"]
 
 [ext_resource type="PackedScene" uid="uid://crsns604twa2s" path="res://機能/ハコフグくん/hakohugu.tscn" id="1_cu8si"]
 [ext_resource type="Texture2D" uid="uid://4affw7la5126" path="res://タイル/logical_gates.png" id="2_3f4ka"]
 [ext_resource type="Script" uid="uid://de4nrnitrnci6" path="res://機能/logical_gates.gd" id="3_pdou8"]
-[ext_resource type="FontFile" uid="uid://bdljw0sjewkdf" path="res://MintsodaLimeGreen13X16Regular-4n30l.ttf" id="5_ekavn"]
 [ext_resource type="Texture2D" uid="uid://biat00ixfxwce" path="res://タイル/壁タイル.png" id="6_wxafa"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_46glv"]
@@ -29,10 +28,6 @@ texture = ExtResource("2_3f4ka")
 [sub_resource type="TileSet" id="TileSet_ekavn"]
 sources/0 = SubResource("TileSetAtlasSource_pdou8")
 
-[sub_resource type="LabelSettings" id="LabelSettings_wxafa"]
-font = ExtResource("5_ekavn")
-font_size = 32
-
 [node name="Node2D" type="Node2D"]
 
 [node name="WallLayer" type="TileMapLayer" parent="."]
@@ -42,7 +37,7 @@ tile_set = SubResource("TileSet_vrg2x")
 
 [node name="LogicalGateLayer" type="TileMapLayer" parent="."]
 texture_filter = 1
-tile_map_data = PackedByteArray("AAD2/wEAAAAAAAAAAAD3/wEAAAABAAAAAAD4/wEAAAAAAAAAAAD5/wEAAAAAAAAAAAD1/wEAAAAAAAIAAAD8////AAAAAAEAAAD9////AAABAAAAAAD+////AAAAAAAAAAD/////AAABAAAAAAAAAP//AAABAAAAAAD6/wEAAAABAAIAAAABAP//AAABAAAAAAACAP//AAABAAEAAAD8//z/AAAAAAMAAAD9//z/AAABAAAAAAD+//z/AAAAAAAAAAD///z/AAAAAAAAAAAAAPz/AAAAAAAAAAABAPz/AAABAAMAAAACAPn/AAAAAAQAAAABAPn/AAAAAAQAAAAAAPn/AAAAAAQAAAD///n/AAAAAAQAAAD+//n/AAAAAAQAAAD9//n/AAAAAAQAAAD8//n/AAAAAAQAAAA=")
+tile_map_data = PackedByteArray("AAD2/wEAAAAAAAAAAAD3/wEAAAABAAAAAAD4/wEAAAAAAAAAAAD5/wEAAAAAAAAAAAD1/wEAAAAAAAIAAAD8////AAAAAAEAAAD9////AAABAAAAAAD+////AAAAAAAAAAD/////AAABAAAAAAAAAP//AAABAAAAAAD6/wEAAAABAAIAAAABAP//AAABAAAAAAACAP//AAABAAEAAAD8//z/AAAAAAMAAAD9//z/AAAAAAAAAAD+//z/AAABAAAAAAD///z/AAABAAAAAAAAAPz/AAABAAAAAAABAPz/AAABAAMAAAACAPn/AAAAAAQAAAABAPn/AAAAAAQAAAAAAPn/AAAAAAQAAAD///n/AAAAAAQAAAD+//n/AAAAAAQAAAD9//n/AAAAAAQAAAD8//n/AAAAAAQAAAA=")
 tile_set = SubResource("TileSet_ekavn")
 script = ExtResource("3_pdou8")
 
@@ -53,17 +48,3 @@ zoom = Vector2(3, 3)
 position = Vector2(-144, -80)
 wall_layer = NodePath("../WallLayer")
 gate_layer = NodePath("../LogicalGateLayer")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Label" type="Label" parent="CanvasLayer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "WASDでイドウ
-シフトでノビル
-ノビたままならゲートを通れる"
-label_settings = SubResource("LabelSettings_wxafa")
-horizontal_alignment = 2

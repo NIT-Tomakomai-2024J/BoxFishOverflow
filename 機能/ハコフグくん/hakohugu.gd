@@ -44,6 +44,8 @@ func _process(_delta):
 	handle_shrink_and_expand()
 	handle_logical_gates()
 	handle_movement()
+	if Input.is_action_just_pressed("ui_accept"):
+		gate_layer.show_incorrect(Vector2i(1, -1))
 
 func _on_moved(coords:Vector2i):
 	# 頭の上、下の論理ゲートを取得
@@ -107,8 +109,29 @@ func handle_movement():
 
 var is_overring_logical_gate = false
 
-var above_gate = LogicalGates.Option.None()
-var below_gate = LogicalGates.Option.None()
+var above_gate = Option.None()
+var below_gate = Option.None()
+
+func solve_eq_gate(gate:Logigate) -> bool:
+	var gap = self.get_tile_position() - gate.head_pos
+	if abs(gap.y) <= 1 and gap.x == 0 and len(gate.bits) == self.bit.get_bitwidth():
+		var was_wronged = false
+		for i in len(gate.bits):
+			if gate.bits[i] != self.bit.bits[i].own_value:
+				gate_layer.show_incorrect(gate.head_pos + Vector2i(i + 1, 0))
+				was_wronged = true
+		if not was_wronged:
+			create_tween().tween_property(
+				self, "position", position + Vector2(0, -sign(gap.y) * 2) * TILE_PIXEL,
+				GATE_OVER_DURATION
+			).finished.connect(
+				func():
+					is_overring_logical_gate = false
+					moved.emit(get_tile_position())
+			)
+		return was_wronged
+	return true
+		
 
 func handle_logical_gates():
 	# アクション中、または膨らんでいない、または上下どちらにもゲートがないならスキップ
@@ -117,23 +140,36 @@ func handle_logical_gates():
 	var above_flag = above_gate.is_some and Input.is_action_just_pressed("move_up")
 	var below_flag = below_gate.is_some and Input.is_action_just_pressed("move_down")
 	
+	var was_collided:bool
+	
 	if above_flag or below_flag:
 		# 頭の上に論理ゲートがある、かつ上に移動しようとしたなら
 		var distance:Vector2
-		is_overring_logical_gate = true
 		if above_flag:
 			distance = Vector2(0, -2)
+			# 上か下がEQゲートなら変わりに別関数を呼び出し
+			if above_gate.unwrap().gate_kind == Logigate.GateKind.COLGATE:
+				was_collided = solve_eq_gate(above_gate.unwrap())
+			else:
+				apply_logical_gate(above_gate.unwrap())
 		# 頭の下に論理ゲートがある、かつ下に移動しようとしたなら
 		if below_flag:
 			distance = Vector2(0, 2)
-		create_tween().tween_property(
-			self, "position", position + distance * TILE_PIXEL,
-			GATE_OVER_DURATION
-		).finished.connect(
-			func():
-				is_overring_logical_gate = false
-				moved.emit(get_tile_position())
-		)
+			# EQゲートなら変わりに別関数を呼び出し
+			if below_gate.unwrap().gate_kind == Logigate.GateKind.COLGATE:
+				was_collided = solve_eq_gate(below_gate.unwrap())
+			else:
+				apply_logical_gate(below_gate.unwrap())
+		if not was_collided:
+			is_overring_logical_gate = true
+			create_tween().tween_property(
+				self, "position", position + distance * TILE_PIXEL,
+				GATE_OVER_DURATION
+			).finished.connect(
+				func():
+					is_overring_logical_gate = false
+					moved.emit(get_tile_position())
+			)
 
 func change_body_length(length:int):
 	body.region_rect.size.x = length * TILE_PIXEL
@@ -194,3 +230,39 @@ func make_face_neutral():
 		head.texture = expanded_face
 	else:
 		head.texture = shrinked_face
+
+func apply_logical_gate(logigate:Logigate):
+	var player_head = get_tile_position()
+	var player_ends = player_head + Vector2i(self.bit.get_bitwidth(), 0)
+	var gate_head   = logigate.head_pos
+	var gate_ends   = gate_head + Vector2i(len(logigate.bits), 0)
+	
+	var overlap_begin = max(player_head.x, gate_head.x)	
+	var overlap_ends  = min(player_ends.x, gate_ends.x)
+	
+	if overlap_begin > overlap_ends:
+		return
+	
+	var overlap_len = overlap_ends - overlap_begin + 1
+	# 重なり開始位置(start index)
+	var player_si = overlap_begin - player_head.x
+	var gate_si   = overlap_begin - gate_head.x
+	
+	for i in range(overlap_len):
+		var gate_i = gate_si + i
+		var plyr_i = player_si + i
+		if gate_i < 0 or gate_i >= len(logigate.bits):
+			continue
+		if plyr_i < 0 or plyr_i >= self.bit.get_bitwidth():
+			continue
+		match logigate.gate_kind:
+			Logigate.GateKind.OR:
+				bit.bits[plyr_i].own_value = bit.bits[plyr_i].own_value or logigate.bits[gate_i]
+			Logigate.GateKind.AND:
+				bit.bits[plyr_i].own_value = bit.bits[plyr_i].own_value and logigate.bits[gate_i]
+			Logigate.GateKind.NAND:
+				bit.bits[plyr_i].own_value = not (bit.bits[plyr_i].own_value and logigate.bits[gate_i])
+			Logigate.GateKind.NOR:
+				bit.bits[plyr_i].own_value = not (bit.bits[plyr_i].own_value or logigate.bits[gate_i])
+			Logigate.GateKind.XOR:
+				bit.bits[plyr_i].own_value = bit.bits[plyr_i].own_value != logigate.bits[gate_i]
